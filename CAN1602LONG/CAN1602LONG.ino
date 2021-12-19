@@ -162,8 +162,8 @@ const byte CAN_CS_PIN = 15;  // Changed from 10 which is used for the display.
 //const byte CAN_SCK_PIN = 13;  // Cannot be changed
 
 /// CBUS objects
-CBUSConfig cbus_config;                  // configuration object
-CBUS2515 CBUS(&cbus_config);        // CBUS object
+CBUS2515 CBUS;                      // CBUS object
+CBUSConfig config;                  // configuration object
 
 #ifdef CBUS_LONG_MESSAGE
 /// @brief CBUSLongMessage defines the internal CBUS object.
@@ -320,25 +320,25 @@ const byte delay_in_ms_between_messages = 50;
 void setupCBUS()
 {
   // set config layout parameters
-  cbus_config.EE_NVS_START = 10;
-  cbus_config.EE_NUM_NVS = NUM_SWITCHES;
-  cbus_config.EE_EVENTS_START = 50;
-  cbus_config.EE_MAX_EVENTS = 64;
-  cbus_config.EE_NUM_EVS = NUM_LEDS;
-  cbus_config.EE_BYTES_PER_EVENT = (cbus_config.EE_NUM_EVS + 4);
+  config.EE_NVS_START = 10;
+  config.EE_NUM_NVS = NUM_SWITCHES;
+  config.EE_EVENTS_START = 50;
+  config.EE_MAX_EVENTS = 64;
+  config.EE_NUM_EVS = NUM_LEDS;
+  config.EE_BYTES_PER_EVENT = (config.EE_NUM_EVS + 4);
 
   // initialise and load configuration
-  cbus_config.setEEPROMtype(EEPROM_INTERNAL);
-  cbus_config.begin();
+  config.setEEPROMtype(EEPROM_INTERNAL);
+  config.begin();
 
-  Serial << F("> mode = ") << ((cbus_config.FLiM) ? "FLiM" : "SLiM") << F(", CANID = ") << cbus_config.CANID;
-  Serial << F(", NN = ") << cbus_config.nodeNum << endl;
+  Serial << F("> mode = ") << ((config.FLiM) ? "FLiM" : "SLiM") << F(", CANID = ") << config.CANID;
+  Serial << F(", NN = ") << config.nodeNum << endl;
 
   // show code version and copyright notice
   printConfig();
 
   // set module parameters
-  CBUSParams params(cbus_config);
+  CBUSParams params(config);
   params.setVersion(VER_MAJ, VER_MIN, VER_BETA);
   params.setModuleId(MODULE_ID);
   params.setFlags(PF_FLiM | PF_COMBI);
@@ -516,7 +516,7 @@ void processSwitches(void)
     if (moduleSwitch[i].changed())
     {
      byte nv = i + 1;
-     byte nvval = cbus_config.readNV(nv);
+     byte nvval = config.readNV(nv);
 
      byte opCode;
 
@@ -582,11 +582,11 @@ void processSwitches(void)
 bool sendEvent(byte opCode, unsigned int eventNo)
 {
   CANFrame msg;
-  msg.id = cbus_config.CANID;
+  msg.id = config.CANID;
   msg.len = 5;
   msg.data[0] = opCode;
-  msg.data[1] = highByte(cbus_config.nodeNum);
-  msg.data[2] = lowByte(cbus_config.nodeNum);
+  msg.data[1] = highByte(config.nodeNum);
+  msg.data[2] = lowByte(config.nodeNum);
   msg.data[3] = highByte(eventNo);
   msg.data[4] = lowByte(eventNo);
 
@@ -647,7 +647,7 @@ void eventhandler(byte index, CANFrame *msg)
       for (int i = 0; i < NUM_LEDS; i++)
       {
         byte ev = i + 1;
-        byte evval = cbus_config.getEventEVval(index, ev);
+        byte evval = config.getEventEVval(index, ev);
 
         switch (evval) {
 		  case 1:
@@ -673,7 +673,7 @@ void eventhandler(byte index, CANFrame *msg)
       for (int i = 0; i < NUM_LEDS; i++)
       {
        byte ev = i + 1;
-       byte evval = cbus_config.getEventEVval(index, ev);
+       byte evval = config.getEventEVval(index, ev);
 
         if (evval > 0) {
            moduleLED[i].off();
@@ -811,27 +811,27 @@ void processSerialInput(void)
 
         // node identity
         Serial << F("> CBUS node configuration") << endl;
-        Serial << F("> mode = ") << (cbus_config.FLiM ? "FLiM" : "SLiM") << F(", CANID = ") << cbus_config.CANID << F(", node number = ") << cbus_config.nodeNum << endl;
+        Serial << F("> mode = ") << (config.FLiM ? "FLiM" : "SLiM") << F(", CANID = ") << config.CANID << F(", node number = ") << config.nodeNum << endl;
         Serial << endl;
         break;
 
       case 'e':
         // EEPROM learned event data table
         Serial << F("> stored events ") << endl;
-        Serial << F("  max events = ") << cbus_config.EE_MAX_EVENTS << F(" EVs per event = ") << cbus_config.EE_NUM_EVS << F(" bytes per event = ") << cbus_config.EE_BYTES_PER_EVENT << endl;
+        Serial << F("  max events = ") << config.EE_MAX_EVENTS << F(" EVs per event = ") << config.EE_NUM_EVS << F(" bytes per event = ") << config.EE_BYTES_PER_EVENT << endl;
 
-        for (byte j = 0; j < cbus_config.EE_MAX_EVENTS; j++) {
-          if (cbus_config.getEvTableEntry(j) != 0) {
+        for (byte j = 0; j < config.EE_MAX_EVENTS; j++) {
+          if (config.getEvTableEntry(j) != 0) {
             ++uev;
           }
         }
 
-        Serial << F("  stored events = ") << uev << F(", free = ") << (cbus_config.EE_MAX_EVENTS - uev) << endl;
-        Serial << F("  using ") << (uev * cbus_config.EE_BYTES_PER_EVENT) << F(" of ") << (cbus_config.EE_MAX_EVENTS * cbus_config.EE_BYTES_PER_EVENT) << F(" bytes") << endl << endl;
+        Serial << F("  stored events = ") << uev << F(", free = ") << (config.EE_MAX_EVENTS - uev) << endl;
+        Serial << F("  using ") << (uev * config.EE_BYTES_PER_EVENT) << F(" of ") << (config.EE_MAX_EVENTS * config.EE_BYTES_PER_EVENT) << F(" bytes") << endl << endl;
 
         Serial << F("  Ev#  |  NNhi |  NNlo |  ENhi |  ENlo | ");
 
-        for (byte j = 0; j < (cbus_config.EE_NUM_EVS); j++) {
+        for (byte j = 0; j < (config.EE_NUM_EVS); j++) {
           sprintf(msgstr, "EV%03d | ", j + 1);
           Serial << msgstr;
         }
@@ -841,18 +841,18 @@ void processSerialInput(void)
         Serial << F(" --------------------------------------------------------------") << endl;
 
         // for each event data line
-        for (byte j = 0; j < cbus_config.EE_MAX_EVENTS; j++) {
-          if (cbus_config.getEvTableEntry(j) != 0) {
+        for (byte j = 0; j < config.EE_MAX_EVENTS; j++) {
+          if (config.getEvTableEntry(j) != 0) {
             sprintf(msgstr, "  %03d  | ", j);
             Serial << msgstr;
 
             // for each data byte of this event
-            for (byte e = 0; e < (cbus_config.EE_NUM_EVS + 4); e++) {
-              sprintf(msgstr, " 0x%02hx | ", cbus_config.readEEPROM(cbus_config.EE_EVENTS_START + (j * cbus_config.EE_BYTES_PER_EVENT) + e));
+            for (byte e = 0; e < (config.EE_NUM_EVS + 4); e++) {
+              sprintf(msgstr, " 0x%02hx | ", config.readEEPROM(config.EE_EVENTS_START + (j * config.EE_BYTES_PER_EVENT) + e));
               Serial << msgstr;
             }
 
-            sprintf(msgstr, "%4d |", cbus_config.getEvTableEntry(j));
+            sprintf(msgstr, "%4d |", config.getEvTableEntry(j));
             Serial << msgstr << endl;
           }
         }
@@ -868,8 +868,8 @@ void processSerialInput(void)
         Serial << F("   NV   Val") << endl;
         Serial << F("  --------------------") << endl;
 
-        for (byte j = 1; j <= cbus_config.EE_NUM_NVS; j++) {
-          byte v = cbus_config.readNV(j);
+        for (byte j = 1; j <= config.EE_NUM_NVS; j++) {
+          byte v = config.readNV(j);
           sprintf(msgstr, " - %02d : %3hd | 0x%02hx", j, v, v);
           Serial << msgstr << endl;
         }
@@ -885,7 +885,7 @@ void processSerialInput(void)
 
       case 'h':
         // event hash table
-        cbus_config.printEvHashTable(false);
+        config.printEvHashTable(false);
         break;
 
       case 'y':
@@ -895,12 +895,12 @@ void processSerialInput(void)
 
       case '*':
         // reboot
-        cbus_config.reboot();
+        config.reboot();
         break;
 
       case 'm':
         // free memory
-        Serial << F("> free SRAM = ") << cbus_config.freeSRAM() << F(" bytes") << endl;
+        Serial << F("> free SRAM = ") << config.freeSRAM() << F(" bytes") << endl;
         break;
 
       case 'r':
@@ -928,7 +928,7 @@ void processSerialInput(void)
           else {
             //Request confirmed within timeout
             Serial << F(">RESETTING AND WIPING EEPROM") << endl;
-            cbus_config.resetModule();
+            config.resetModule();
             ResetRq = false;
           }
         }
