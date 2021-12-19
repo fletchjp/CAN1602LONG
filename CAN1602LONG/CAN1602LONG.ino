@@ -1,7 +1,12 @@
 /// @file CAN1602LONG.ino
 /// @brief Long message example with pins and a display
 ////////////////////////////////////////////////////////////////////////////////////
-/// Version 1a beta 1 
+/// Version 1a beta 1 First posting
+/// Version 1a beta 2 
+//  Use config methods consistent with current CBUS and CBUS2515 releases 
+/// CBUS2515 CBUS;                      // CBUS object
+/// CBUSConfig config;                  // configuration object
+///
 ///////////////////////////////////////////////////////////////////////////////////
 /// Version using DfRobotInputAbstraction.h to model input pins.
 ///
@@ -135,7 +140,7 @@ unsigned char mname[7] = { '1', '6', '0', '2', 'L', 'O', 'N' };
 /// constants
 const byte VER_MAJ = 1;         // code major version
 const char VER_MIN = 'a';       // code minor version
-const byte VER_BETA = 1;        // code beta sub-version
+const byte VER_BETA = 2;        // code beta sub-version
 const byte MODULE_ID = 99;      // CBUS module type
 
 const unsigned long CAN_OSC_FREQ = 8000000;     // Oscillator frequency on the CAN2515 board
