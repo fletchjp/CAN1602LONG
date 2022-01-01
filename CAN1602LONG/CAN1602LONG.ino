@@ -6,7 +6,8 @@
 //  Use config methods consistent with current CBUS and CBUS2515 releases 
 /// CBUS2515 CBUS;                      // CBUS object
 /// CBUSConfig config;                  // configuration object
-///
+/// Version 1a beta 3
+/// Fix problem with while (cbus_long_message.is_sending()) not exiting.
 ///////////////////////////////////////////////////////////////////////////////////
 /// Version using DfRobotInputAbstraction.h to model input pins.
 ///
@@ -140,7 +141,7 @@ unsigned char mname[7] = { '1', '6', '0', '2', 'L', 'O', 'N' };
 /// constants
 const byte VER_MAJ = 1;         // code major version
 const char VER_MIN = 'a';       // code minor version
-const byte VER_BETA = 2;        // code beta sub-version
+const byte VER_BETA = 3;        // code beta sub-version
 const byte MODULE_ID = 99;      // CBUS module type
 
 const unsigned long CAN_OSC_FREQ = 8000000;     // Oscillator frequency on the CAN2515 board
@@ -487,7 +488,9 @@ void processButtons(void)
 #ifdef CBUS_LONG_MESSAGE
 // Somewhere to send the long message.
       // Trial to avoid problem where the first part of the long message is lost.
-      while(cbus_long_message.is_sending()) { } //wait for previous message to finish.
+      while(cbus_long_message.is_sending()) {
+        cbus_long_message.process(); // Added to make sure the message gets sent.
+      } //wait for previous message to finish.
       string_length = snprintf(long_message_output_buffer, output_buffer_size,
                       "Button %d changed", button);
       message_length = strlen(long_message_output_buffer);
