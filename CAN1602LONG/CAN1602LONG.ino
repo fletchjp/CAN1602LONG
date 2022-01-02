@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 /// Version 1a beta 1 First posting
 /// Version 1a beta 2 
-//  Use config methods consistent with current CBUS and CBUS2515 releases 
+//  Use config methods consistent with current CBUS and CBUS2515 releases
 /// CBUS2515 CBUS;                      // CBUS object
 /// CBUSConfig config;                  // configuration object
 /// Version 1a beta 3
