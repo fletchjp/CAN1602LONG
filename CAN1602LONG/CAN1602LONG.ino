@@ -407,7 +407,7 @@ void setupModule()
 void setup1602() {
  lcd.begin(16, 2);
  lcd.setCursor(0,0);
- lcd.print("CAN1602PIN");
+ lcd.print("CAN1602LONG");
  lcd.setCursor(0,1);
  lcd.print("Press Key:");
 }
@@ -433,7 +433,7 @@ void setup()
 {
   while(!Serial);
   Serial.begin (115200);
-  Serial << endl << endl << F("> ** CAN1602PIN ** ") << __FILE__ << endl;
+  Serial << endl << endl << F("> ** CAN1602LONG ** ") << __FILE__ << endl;
 
   setup1602();
   setupCBUS();
