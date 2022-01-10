@@ -62,3 +62,11 @@ The following libraries are also used:
 
 5.  Bounce2, LiquidCrystal, SPI, Wire, EEPROM also available from the Arduino IDE
 
+## Setting Up
+
+This module is a CBUS FLiM only module and does not have the push button and yellow and green LEDs on other modules.
+
+The module has to be configured for use with CBUS using the method described for CANmINnOUT here: https://github.com/MartinDaCosta53/CANmINnOUT
+
+See the section Setup and Serial Monitor at the end of the README.
+
