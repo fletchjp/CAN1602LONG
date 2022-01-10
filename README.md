@@ -1,5 +1,9 @@
 # CAN1602LONG
 
+This is a description of the demonstration implementation of the RPC0005 CBUS protocol.
+
+Please send any comments or requests for information to John Fletcher (M6777) john@bunbury28.plus.com 
+
 ## Long message example with pins and a display
 
 This code supports a shield with buttons and a display with 2 rows of 16 characters.
