@@ -36,7 +36,7 @@ https://www.electronicshub.org/arduino-mcp2515-can-bus-tutorial/
 
 The Long Message protocol is in the Arduino CBUS libraries from Duncan Greenwood which are on MERG-DEV. https://github.com/MERG-DEV
 
-The following components are needed for AVR boards (NANO, UNO, MEGA etc):
+The following library components are needed for AVR boards (NANO, UNO, MEGA etc):
 
 CBUS2515 CBUS CBUSLED CBUSswitch CBUSconfig and also ACAN2515
 
